@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/worker/job_contract.schema.json",
+  "title": "JobRequest",
+  "type": "object",
+  "properties": {
+    "id": {"type": ["string", "null"]},
+    "type": {
+      "type": "string",
+      "enum": [
+        "office_to_pdf",
+        "pdf_to_images",
+        "ocr",
+        "extract_tables",
+        "excel_to_csv"
+      ]
+    },
+    "payload": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "source_url": {"type": "string", "format": "uri"}
+          },
+          "required": ["source_url"],
+          "additionalProperties": false,
+          "title": "OfficeToPdfPayload"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "source_url": {"type": "string", "format": "uri"},
+            "dpi": {"type": "integer", "minimum": 1}
+          },
+          "required": ["source_url"],
+          "additionalProperties": false,
+          "title": "PdfToImagesPayload"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "source_url": {"type": "string", "format": "uri"},
+            "lang": {"type": "string"}
+          },
+          "required": ["source_url"],
+          "additionalProperties": false,
+          "title": "OCRPayload"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "source_url": {"type": "string", "format": "uri"},
+            "flavor": {"type": "string", "enum": ["lattice", "stream"]},
+            "pages": {"type": "string"}
+          },
+          "required": ["source_url"],
+          "additionalProperties": false,
+          "title": "ExtractTablesPayload"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "source_url": {"type": "string", "format": "uri"},
+            "sheet": {"anyOf": [{"type": "integer"}, {"type": "string"}, {"type": "null"}]}
+          },
+          "required": ["source_url"],
+          "additionalProperties": false,
+          "title": "ExcelToCsvPayload"
+        }
+      ]
+    }
+  },
+  "required": ["type", "payload"],
+  "additionalProperties": false
+}
