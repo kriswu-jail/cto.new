@@ -1,0 +1,20 @@
+{
+  "name": "inmemory-job-queue",
+  "version": "1.0.0",
+  "description": "Lightweight in-memory job manager with REST APIs and progress tracking",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "fs-extra": "^11.2.0",
+    "nanoid": "^5.0.7"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
+  }
+}
