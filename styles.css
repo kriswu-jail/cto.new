@@ -1,0 +1,81 @@
+:root{
+  --bg: #0b1021;
+  --card: #12193a;
+  --text: #e6e8f2;
+  --text-muted: #b8bfdd;
+  --primary: #4f8cff;
+  --primary-contrast: #0a46bf;
+  --success: #1fbf75;
+  --warning: #ffb020;
+  --danger: #ff5a5f;
+  --border: #2a3460;
+}
+*{box-sizing:border-box}
+html{color-scheme:dark light}
+body{
+  margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+  background: var(--bg); color: var(--text); line-height:1.6;
+}
+.container{max-width: 960px; margin: 0 auto; padding: 16px}
+
+.skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+.skip-link:focus{position:static;width:auto;height:auto;background:#000;color:#fff;padding:8px;border-radius:6px}
+
+.site-header{background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0)); border-bottom:1px solid var(--border)}
+.site-header .container{display:flex;align-items:center;justify-content:space-between}
+.site-title{font-size:clamp(20px,4vw,28px);margin:0}
+.site-nav ul{display:flex;gap:12px;list-style:none;padding:0;margin:0}
+.site-nav a{color:var(--text);text-decoration:none;padding:6px 10px;border-radius:6px}
+.site-nav a:focus,.site-nav a:hover{outline:2px solid var(--primary);}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin:16px 0;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.label{display:block;margin-bottom:8px}
+.hint{color:var(--text-muted);margin-top:6px}
+.errors{color:#fff;background: #9b1c31;padding:10px;border-radius:8px;margin-top:8px;display:none}
+.errors.show{display:block}
+
+#upload-form{display:grid;gap:16px}
+#params{display:grid;grid-template-columns:1fr;gap:12px}
+.param{display:grid;grid-template-columns: 1fr auto;gap:8px;align-items:center}
+.param label{grid-column:1/2}
+.param input[type=range]{grid-column:1/3}
+.param output{grid-column:2/3;justify-self:end}
+
+.file-area input[type=file]{display:block;width:100%}
+.actions{display:flex;gap:12px;flex-wrap:wrap}
+.btn{background:#202a53;color:var(--text);border:1px solid var(--border);padding:10px 14px;border-radius:10px;cursor:pointer;text-decoration:none}
+.btn.primary{background:var(--primary);color:#0b1021;border-color:transparent}
+.btn:focus{outline:2px solid var(--primary-contrast);outline-offset:2px}
+.btn[disabled]{opacity:.6;cursor:not-allowed}
+
+.tasks ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.task-item{display:grid;gap:8px;border:1px dashed var(--border);border-radius:10px;padding:10px}
+.task-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.badge{font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid var(--border);color:var(--text-muted)}
+.badge.success{color:#0b1021;background:var(--success);border-color:transparent}
+.badge.warn{color:#0b1021;background:var(--warning);border-color:transparent}
+.badge.danger{color:#fff;background:var(--danger);border-color:transparent}
+.small{font-size:12px;color:var(--text-muted)}
+
+.progress-wrap{display:flex;align-items:center;gap:8px}
+.progress{position:relative;height:12px;background:#0a112b;border:1px solid var(--border);border-radius:999px;overflow:hidden;flex:1}
+.progress > span{position:absolute;inset:0 0 0 0;transform-origin:left center;background:linear-gradient(90deg,var(--primary),#22d3ee);width:0}
+.progress[aria-valuenow] > span{width: calc(attr(aria-valuenow percentage));}
+.progress-val{min-width:42px;text-align:right}
+
+.results-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.result-card{border:1px solid var(--border);border-radius:12px;padding:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));}
+.result-card h3{margin:0 0 6px 0;font-size:16px}
+.result-actions{display:flex;gap:8px;flex-wrap:wrap}
+
+.site-footer{border-top:1px solid var(--border);margin-top:24px}
+.site-footer .container{display:flex;justify-content:center}
+
+@media (max-width: 600px){
+  .param{grid-template-columns: 1fr 1fr}
+  .progress-val{min-width:auto}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;transition:none!important}
+}
