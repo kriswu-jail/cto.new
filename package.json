@@ -1,0 +1,12 @@
+{
+  "name": "file-upload-download-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Minimal Next.js API endpoints for upload/download with rate limiting and temp storage.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  }
+}
