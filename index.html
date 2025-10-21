@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>多任务文件处理器 | 中文界面</title>
+  <meta name="description" content="支持多文件上传、队列位置与处理进度展示、结果下载、失败重试与FAQ/隐私说明的中文前端界面。移动端适配，ARIA无障碍与SEO优化。" />
+  <meta name="keywords" content="上传, 多任务, 进度, 下载, 隐私, FAQ, 无障碍, 移动端, SEO" />
+  <meta name="robots" content="index,follow" />
+  <meta property="og:title" content="多任务文件处理器" />
+  <meta property="og:description" content="支持多文件上传、队列进度、结果下载与FAQ的中文前端界面。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="zh_CN" />
+  <link rel="canonical" href="https://example.local/" />
+  <link rel="alternate" hreflang="zh-CN" href="https://example.local/" />
+  <link rel="preload" as="style" href="./styles.css" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "多任务文件处理器",
+    "applicationCategory": "Utility",
+    "inLanguage": "zh-CN",
+    "operatingSystem": "Any",
+    "description": "支持多文件上传、队列进度与结果下载的中文界面。",
+    "url": "https://example.local/"
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main" tabindex="0">跳到主要内容</a>
+  <header class="site-header" role="banner">
+    <div class="container">
+      <h1 class="site-title" id="site-title">多任务文件处理器</h1>
+      <nav class="site-nav" aria-label="顶栏导航">
+        <ul>
+          <li><a href="#uploader">上传</a></li>
+          <li><a href="#results">结果</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#privacy">隐私</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="container" role="main">
+    <section id="uploader" class="card" aria-labelledby="uploader-title" role="region">
+      <h2 id="uploader-title">上传并配置任务</h2>
+      <p id="uploader-desc">支持多文件上传，选择不同处理类型与参数，系统会按队列依次处理并展示进度。</p>
+
+      <form id="upload-form" aria-describedby="uploader-desc">
+        <fieldset>
+          <legend>选择处理类型</legend>
+          <label for="type-select" class="label">处理类型</label>
+          <select id="type-select" name="type" aria-label="处理类型">
+            <option value="convert">格式转换</option>
+            <option value="compress" selected>图像压缩</option>
+            <option value="recognize">文本识别</option>
+          </select>
+        </fieldset>
+
+        <fieldset id="params" aria-labelledby="params-legend">
+          <legend id="params-legend">参数配置</legend>
+          <div class="param" id="param-quality">
+            <label for="quality">质量（%）</label>
+            <input type="range" id="quality" name="quality" min="10" max="100" step="5" value="80" aria-valuemin="10" aria-valuemax="100" aria-valuenow="80" aria-label="质量百分比" />
+            <output for="quality" id="quality-output" aria-live="polite">80%</output>
+          </div>
+          <div class="param">
+            <label><input type="checkbox" id="advanced" name="advanced" /> 启用高级优化</label>
+          </div>
+        </fieldset>
+
+        <div class="file-area">
+          <label for="file-input" class="label">选择文件（可多选）</label>
+          <input id="file-input" type="file" multiple aria-describedby="file-hint" accept="image/*,application/pdf,text/plain" />
+          <p id="file-hint" class="hint">支持图片/PDF/文本，单文件不超过 10MB。选择后点击“开始处理”。</p>
+          <div id="error-region" class="errors" role="alert" aria-live="assertive"></div>
+        </div>
+
+        <div class="actions">
+          <button type="button" id="start-btn" class="btn primary" aria-controls="task-list" aria-describedby="uploader-desc">开始处理</button>
+          <a class="btn" href="./samples/example.txt" download aria-label="下载示例文件">下载示例</a>
+        </div>
+      </form>
+
+      <div class="tasks" id="tasks" aria-live="polite">
+        <h3 id="task-list-title">任务队列</h3>
+        <ul id="task-list" role="list" aria-labelledby="task-list-title"></ul>
+      </div>
+    </section>
+
+    <section id="results" class="card" aria-labelledby="results-title" role="region" aria-busy="false" tabindex="-1">
+      <h2 id="results-title">处理结果</h2>
+      <div id="result-cards" class="results-grid" role="list"></div>
+    </section>
+
+    <section id="faq" class="card" aria-labelledby="faq-title" role="region">
+      <h2 id="faq-title">常见问题（FAQ）</h2>
+      <details>
+        <summary>处理是如何进行的？</summary>
+        <p>文件将进入队列，按顺序处理。页面会定期轮询状态，以展示队列位置、进度与错误提示。</p>
+      </details>
+      <details>
+        <summary>我的文件会被保存吗？</summary>
+        <p>示例应用不会上传文件到服务器，处理均在本地模拟完成。实际部署时请查看隐私说明。</p>
+      </details>
+      <details>
+        <summary>失败怎么办？</summary>
+        <p>可在结果卡片中点击“重试”。若多次失败，请检查文件格式与大小是否符合要求。</p>
+      </details>
+    </section>
+
+    <section id="privacy" class="card" aria-labelledby="privacy-title" role="region">
+      <h2 id="privacy-title">隐私说明</h2>
+      <p>本演示应用不会将文件上传至服务器，仅做前端模拟。正式版本应提供清晰的隐私政策与数据保留策略。</p>
+    </section>
+  </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <p>© <span id="year"></span> 多任务文件处理器 · <a href="#privacy">隐私</a></p>
+    </div>
+  </footer>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
