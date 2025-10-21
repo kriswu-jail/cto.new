@@ -1,0 +1,15 @@
+# Render deployment example for Next.js app
+services:
+  - type: web
+    name: web
+    env: node
+    plan: free
+    buildCommand: pnpm --filter web build
+    startCommand: pnpm --filter web start
+    autoDeploy: false
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: NEXT_PUBLIC_API_BASE_URL
+        fromService: web
+        property: url
