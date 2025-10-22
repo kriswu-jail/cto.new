@@ -1,0 +1,37 @@
+# Node and pnpm
+node_modules/
+.pnpm-store/
+.pnp.*
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor
+.vscode/
+.idea/
+.DS_Store
+
+# Env files
+.env
+.env.*
+!.env.example
+
+# Next.js
+.next/
+out/
+
+# Build outputs
+dist/
+build/
+coverage/
+
+# Husky
+.husky/_/
+
+# Playwright
+playwright-report/
+blob-report/
+.test-results/

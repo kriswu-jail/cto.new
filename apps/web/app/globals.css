@@ -1,0 +1,69 @@
+/* 全局样式 */
+:root {
+  --bg: #0b0f1a;
+  --fg: #e6e6e6;
+  --muted: #a1a1aa;
+  --accent: #4f46e5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Emoji, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 0;
+}
+
+.navlinks {
+  display: flex;
+  gap: 12px;
+}
+
+.navlink {
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.navlink.active, .navlink:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.footer {
+  margin-top: 48px;
+  padding: 24px 0;
+  color: var(--muted);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+}
