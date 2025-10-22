@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>支付结果 - cto.new</title>
+    <style>
+      body {
+        font-family: 'Inter', system-ui, sans-serif;
+        background: #0f172a;
+        color: #f8fafc;
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+      .panel {
+        background: rgba(15, 23, 42, 0.9);
+        padding: 32px;
+        border-radius: 24px;
+        width: min(460px, 100%);
+        box-shadow: 0 40px 80px rgba(15, 23, 42, 0.6);
+        display: grid;
+        gap: 24px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 1.8rem;
+      }
+      label {
+        font-size: 0.9rem;
+        color: #94a3b8;
+        display: block;
+        margin-bottom: 6px;
+      }
+      input {
+        width: 100%;
+        padding: 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        background: rgba(15, 23, 42, 0.6);
+        color: #f8fafc;
+        font-size: 1rem;
+      }
+      button {
+        padding: 14px;
+        border-radius: 14px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+      button.primary {
+        background: linear-gradient(135deg, #22d3ee, #a855f7);
+        color: #0f172a;
+      }
+      button.secondary {
+        background: transparent;
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        color: #e2e8f0;
+      }
+      .status {
+        padding: 16px;
+        border-radius: 16px;
+        background: rgba(30, 64, 175, 0.3);
+        display: grid;
+        gap: 10px;
+        font-size: 0.95rem;
+      }
+      .success {
+        background: rgba(34, 197, 94, 0.2);
+      }
+      .failed {
+        background: rgba(248, 113, 113, 0.2);
+      }
+      .support {
+        font-size: 0.85rem;
+        color: #cbd5f5;
+      }
+      pre {
+        background: rgba(15, 23, 42, 0.6);
+        border-radius: 14px;
+        padding: 16px;
+        overflow-x: auto;
+        font-size: 0.85rem;
+      }
+      a {
+        color: #38bdf8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="panel">
+      <header>
+        <h1>支付结果</h1>
+        <p>查询订单支付状态，并自动刷新额度。</p>
+      </header>
+      <div>
+        <label for="orderId">订单 ID</label>
+        <input id="orderId" placeholder="例如：20241023123011abcd" />
+      </div>
+      <div class="actions" style="display: flex; gap: 12px">
+        <button class="primary" id="query">查询状态</button>
+        <button class="secondary" id="back">返回支付页</button>
+      </div>
+      <div id="result" class="status" style="display: none"></div>
+      <div id="quota" class="status" style="display: none"></div>
+      <div class="support">
+        仍未到账？请联系 <a href="mailto:support@example.com" id="supportEmail">support@example.com</a> 或在支付页添加企业微信。
+      </div>
+    </div>
+    <script>
+      const storageKeyToken = 'cto.payments.accessToken';
+      const input = document.getElementById('orderId');
+      const queryBtn = document.getElementById('query');
+      const resultBox = document.getElementById('result');
+      const quotaBox = document.getElementById('quota');
+      const backBtn = document.getElementById('back');
+      const supportEmail = document.getElementById('supportEmail');
+
+      const params = new URLSearchParams(location.search);
+      const initialOrderId = params.get('orderId');
+      if (initialOrderId) {
+        input.value = initialOrderId;
+      }
+
+      const fetchJSON = async (url, options = {}) => {
+        const response = await fetch(url, options);
+        if (!response.ok) {
+          throw new Error(await response.text());
+        }
+        return response.json();
+      };
+
+      const renderStatus = (order) => {
+        resultBox.style.display = 'block';
+        resultBox.classList.remove('success', 'failed');
+        let badge = '等待支付';
+        if (order.status === 'paid') {
+          badge = '支付成功';
+          resultBox.classList.add('success');
+        } else if (order.status === 'failed' || order.status === 'canceled') {
+          badge = '支付失败';
+          resultBox.classList.add('failed');
+        }
+        resultBox.innerHTML = `
+          <div>${badge}</div>
+          <div>渠道：${order.channel}</div>
+          <div>金额：¥ ${(order.amountCents / 100).toFixed(2)} · 交易号：${order.providerTransactionId ?? '—'}</div>
+          <div>下单时间：${order.createdAt}</div>
+          ${order.paidAt ? `<div>支付时间：${order.paidAt}</div>` : ''}
+        `;
+      };
+
+      const renderQuota = (quota) => {
+        quotaBox.style.display = 'block';
+        quotaBox.innerHTML = `剩余 ${quota.remainingCredits} / 总计 ${quota.totalCredits}，并发 ${quota.concurrencyLimit}，单文件 ${(quota.singleFileBytes / 1024 / 1024).toFixed(1)} MB`;
+      };
+
+      const queryOrder = async () => {
+        const orderId = input.value.trim();
+        if (!orderId) {
+          alert('请输入订单 ID');
+          return;
+        }
+        const token = localStorage.getItem(storageKeyToken);
+        if (!token) {
+          alert('请返回支付页重新获取访问令牌');
+          return;
+        }
+        try {
+          const data = await fetchJSON(`/api/orders/${orderId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          renderStatus(data.order);
+          renderQuota(data.quota);
+        } catch (error) {
+          resultBox.style.display = 'block';
+          resultBox.classList.remove('success');
+          resultBox.classList.add('failed');
+          resultBox.textContent = '查询失败，请确认订单 ID 是否正确。';
+        }
+      };
+
+      queryBtn.addEventListener('click', queryOrder);
+      backBtn.addEventListener('click', () => {
+        window.location.href = 'payment.html';
+      });
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        const meta = await fetchJSON('/api/meta');
+        if (meta.support?.email) {
+          supportEmail.textContent = meta.support.email;
+          supportEmail.href = `mailto:${meta.support.email}`;
+        }
+        if (initialOrderId) {
+          queryOrder();
+        }
+      });
+    </script>
+  </body>
+</html>

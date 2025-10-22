@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>支付中心 - cto.new</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+      body {
+        margin: 0;
+        font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #f3f4f6;
+        color: #111827;
+      }
+      [data-theme='dark'] body {
+        background: #111827;
+        color: #f9fafb;
+      }
+      header {
+        background: linear-gradient(120deg, #2563eb, #7c3aed);
+        color: #fff;
+        padding: 40px 24px 32px;
+        text-align: center;
+      }
+      main {
+        max-width: 960px;
+        margin: -40px auto 64px;
+        padding: 0 24px 64px;
+      }
+      .card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 20px;
+        box-shadow: 0 15px 50px rgba(15, 23, 42, 0.12);
+        padding: 32px;
+        margin-bottom: 24px;
+      }
+      [data-theme='dark'] .card {
+        background: rgba(30, 41, 59, 0.85);
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.4);
+      }
+      .card h2 {
+        margin-top: 0;
+        font-size: 1.4rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .products {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 20px;
+        margin-top: 24px;
+      }
+      .product {
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        border-radius: 18px;
+        padding: 20px;
+        cursor: pointer;
+        transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .product.active {
+        border-color: #2563eb;
+        box-shadow: 0 12px 30px rgba(37, 99, 235, 0.2);
+        transform: translateY(-4px);
+      }
+      .product h3 {
+        margin: 0;
+        font-size: 1.2rem;
+      }
+      .product .price {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2563eb;
+      }
+      .chip {
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: rgba(59, 130, 246, 0.12);
+        color: #1d4ed8;
+        font-size: 0.8rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .channels {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 16px 0 8px;
+      }
+      .channel-button {
+        padding: 10px 16px;
+        border-radius: 12px;
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        background: transparent;
+        cursor: pointer;
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+      }
+      .channel-button.active {
+        background: #2563eb;
+        border-color: #2563eb;
+        color: #fff;
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.28);
+      }
+      .actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+      }
+      button.primary {
+        background: linear-gradient(135deg, #2563eb, #7c3aed);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 14px 28px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      button.primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+      button.primary:not(:disabled):hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(37, 99, 235, 0.3);
+      }
+      button.secondary {
+        background: transparent;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-weight: 500;
+        cursor: pointer;
+      }
+      .payment-result {
+        margin-top: 24px;
+        display: grid;
+        gap: 16px;
+      }
+      .qr-wrapper {
+        display: grid;
+        place-content: center;
+        padding: 16px;
+        background: rgba(241, 245, 249, 0.8);
+        border-radius: 16px;
+      }
+      .qr-wrapper img {
+        width: 240px;
+        height: 240px;
+      }
+      pre {
+        background: rgba(15, 23, 42, 0.85);
+        color: #f8fafc;
+        padding: 16px;
+        border-radius: 14px;
+        overflow-x: auto;
+        font-size: 0.9rem;
+      }
+      footer {
+        margin-top: 40px;
+        font-size: 0.9rem;
+        color: #6b7280;
+      }
+      a {
+        color: #2563eb;
+      }
+      .badge {
+        background: rgba(16, 185, 129, 0.12);
+        color: #047857;
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .support-card {
+        display: grid;
+        gap: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>支付中心</h1>
+      <p>升级额度，解锁更多请求次数、并发能力与单文件大小限制。</p>
+    </header>
+    <main>
+      <section class="card" id="quota-card">
+        <h2>当前额度</h2>
+        <div id="quota-info">
+          <div class="badge">正在加载额度...</div>
+        </div>
+      </section>
+      <section class="card">
+        <h2>选择套餐</h2>
+        <div class="products" id="products"></div>
+      </section>
+      <section class="card" id="channel-card" style="display: none">
+        <h2>选择支付方式</h2>
+        <div class="channels" id="channels"></div>
+        <div class="actions">
+          <button class="primary" id="pay-button" disabled>生成支付订单</button>
+          <button class="secondary" id="cancel-button">重新选择套餐</button>
+        </div>
+      </section>
+      <section class="card" id="payment-card" style="display: none">
+        <h2>支付指引</h2>
+        <div class="payment-result" id="payment-result"></div>
+        <div class="actions">
+          <a class="secondary" id="result-link" href="result.html" target="_blank">查看支付结果</a>
+          <button class="secondary" id="retry-button">重新发起</button>
+        </div>
+      </section>
+      <section class="card support-card">
+        <h2>帮助与安全</h2>
+        <div>
+          <div class="badge">安全提醒</div>
+          <p>
+            请确认支付页面来自官方域名，Webhook 已设置速率限制与签名校验，访问令牌仅存储在本地设备。
+            如需沙箱测试，可在 <code>.env</code> 中启用 <code>PAYMENT_SANDBOX=true</code>。
+          </p>
+        </div>
+        <div>
+          <div class="badge">联系客服</div>
+          <p id="support-info">支持邮箱：support@example.com</p>
+        </div>
+      </section>
+      <footer>
+        <p>© <span id="year"></span> cto.new — 微信支付 V3 &amp; 支付宝当面付 / 网站支付。</p>
+      </footer>
+    </main>
+    <script>
+      const storageKeyFingerprint = 'cto.payments.deviceFingerprint';
+      const storageKeyToken = 'cto.payments.accessToken';
+      const productContainer = document.getElementById('products');
+      const quotaInfo = document.getElementById('quota-info');
+      const channelsContainer = document.getElementById('channels');
+      const channelCard = document.getElementById('channel-card');
+      const payButton = document.getElementById('pay-button');
+      const cancelButton = document.getElementById('cancel-button');
+      const paymentCard = document.getElementById('payment-card');
+      const paymentResultEl = document.getElementById('payment-result');
+      const resultLink = document.getElementById('result-link');
+      const retryButton = document.getElementById('retry-button');
+      const supportInfo = document.getElementById('support-info');
+      const quotaCard = document.getElementById('quota-card');
+      const yearEl = document.getElementById('year');
+
+      const channelLabels = {
+        wechat_native: '微信支付 · Native 扫码',
+        wechat_jsapi: '微信支付 · JSAPI',
+        alipay_pc: '支付宝电脑网站',
+        alipay_f2f: '支付宝当面付',
+      };
+
+      const state = {
+        accessToken: null,
+        customer: null,
+        quota: null,
+        products: [],
+        selectedProduct: null,
+        selectedChannel: null,
+        lastOrder: null,
+        payment: null,
+        support: null,
+      };
+
+      const fetchJSON = async (url, options = {}) => {
+        const resp = await fetch(url, options);
+        if (!resp.ok) {
+          throw new Error(await resp.text());
+        }
+        return resp.json();
+      };
+
+      const ensureFingerprint = () => {
+        let fingerprint = localStorage.getItem(storageKeyFingerprint);
+        if (!fingerprint) {
+          fingerprint = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)) + Date.now();
+          localStorage.setItem(storageKeyFingerprint, fingerprint);
+        }
+        return fingerprint;
+      };
+
+      const ensureCustomer = async () => {
+        const fingerprint = ensureFingerprint();
+        const payload = {
+          deviceFingerprint: fingerprint,
+        };
+        const token = localStorage.getItem(storageKeyToken);
+        if (token) {
+          payload.accessToken = token;
+        }
+        const data = await fetchJSON('/api/customers/anonymous', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        state.customer = data.customer;
+        state.quota = data.quota;
+        state.accessToken = data.customer.accessToken;
+        localStorage.setItem(storageKeyToken, state.accessToken);
+        renderQuota();
+      };
+
+      const renderQuota = () => {
+        if (!state.quota) {
+          quotaInfo.innerHTML = '<div class="badge">无法获取额度</div>';
+          return;
+        }
+        quotaInfo.innerHTML = `
+          <div class="badge">剩余 ${state.quota.remainingCredits} / 总计 ${state.quota.totalCredits} 次</div>
+          <p>并发限制：${state.quota.concurrencyLimit} · 单文件大小：${(state.quota.singleFileBytes / 1024 / 1024).toFixed(1)} MB</p>
+        `;
+      };
+
+      const renderProducts = () => {
+        if (!state.products.length) {
+          productContainer.innerHTML = '<p>暂无可售产品，请稍后再试。</p>';
+          return;
+        }
+        productContainer.innerHTML = '';
+        state.products.forEach((product) => {
+          const el = document.createElement('div');
+          el.className = 'product';
+          if (state.selectedProduct && state.selectedProduct.id === product.id) {
+            el.classList.add('active');
+          }
+          el.innerHTML = `
+            <div class="chip">${product.credits} 次额度</div>
+            <h3>${product.name}</h3>
+            <div class="price">¥ ${(product.priceCents / 100).toFixed(2)}</div>
+            <p>${product.description ?? ''}</p>
+            <div>并发 ${product.concurrencyLimit} · 单文件 ${(product.singleFileBytes / 1024 / 1024).toFixed(1)} MB</div>
+          `;
+          el.addEventListener('click', () => {
+            state.selectedProduct = product;
+            state.selectedChannel = null;
+            renderProducts();
+            renderChannels();
+            channelCard.style.display = 'block';
+          });
+          productContainer.appendChild(el);
+        });
+      };
+
+      const renderChannels = () => {
+        channelsContainer.innerHTML = '';
+        if (!state.selectedProduct) {
+          payButton.disabled = true;
+          return;
+        }
+        const supported = JSON.parse(state.selectedProduct.channelSupport || '[]');
+        supported.forEach((channel) => {
+          const button = document.createElement('button');
+          button.className = 'channel-button';
+          button.textContent = channelLabels[channel] || channel;
+          const isJsapi = channel === 'wechat_jsapi';
+          if (isJsapi) {
+            button.textContent += '（内测中）';
+            button.disabled = true;
+          }
+          if (state.selectedChannel === channel) {
+            button.classList.add('active');
+          }
+          button.addEventListener('click', () => {
+            if (isJsapi) {
+              alert('JSAPI 需在微信内使用，敬请期待。');
+              return;
+            }
+            state.selectedChannel = channel;
+            renderChannels();
+            payButton.disabled = false;
+          });
+          channelsContainer.appendChild(button);
+        });
+        payButton.disabled = !state.selectedChannel;
+      };
+
+      const renderPayment = () => {
+        paymentResultEl.innerHTML = '';
+        if (!state.payment || !state.lastOrder) {
+          paymentCard.style.display = 'none';
+          return;
+        }
+        paymentCard.style.display = 'block';
+        resultLink.href = `result.html?orderId=${state.lastOrder.id}`;
+        if (state.payment.qrcode) {
+          const qrWrapper = document.createElement('div');
+          qrWrapper.className = 'qr-wrapper';
+          const img = document.createElement('img');
+          img.src = state.payment.qrcode;
+          img.alt = '扫码支付二维码';
+          qrWrapper.appendChild(img);
+          paymentResultEl.appendChild(qrWrapper);
+        }
+        if (state.payment.link) {
+          const link = document.createElement('a');
+          link.href = state.payment.link;
+          link.target = '_blank';
+          link.rel = 'noopener';
+          link.textContent = '打开官方支付页';
+          paymentResultEl.appendChild(link);
+        }
+        if (state.payment.form) {
+          const container = document.createElement('div');
+          container.innerHTML = state.payment.form;
+          paymentResultEl.appendChild(container);
+          const autoSubmit = container.querySelector('form');
+          if (autoSubmit) {
+            autoSubmit.target = '_blank';
+          }
+        }
+        if (!state.payment.qrcode && !state.payment.link && !state.payment.form) {
+          const pre = document.createElement('pre');
+          pre.textContent = JSON.stringify(state.payment, null, 2);
+          paymentResultEl.appendChild(pre);
+        }
+      };
+
+      const createOrder = async () => {
+        if (!state.selectedProduct || !state.selectedChannel) {
+          return;
+        }
+        payButton.disabled = true;
+        try {
+          const response = await fetchJSON('/api/orders', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${state.accessToken}`,
+            },
+            body: JSON.stringify({
+              productId: state.selectedProduct.id,
+              channel: state.selectedChannel,
+            }),
+          });
+          state.lastOrder = response.order;
+          state.payment = response.payment;
+          state.quota = response.quota;
+          renderQuota();
+          renderPayment();
+        } catch (error) {
+          alert('生成订单失败，请稍后重试。');
+        } finally {
+          payButton.disabled = false;
+        }
+      };
+
+      const resetSelection = () => {
+        state.selectedProduct = null;
+        state.selectedChannel = null;
+        channelCard.style.display = 'none';
+        paymentCard.style.display = 'none';
+        renderProducts();
+      };
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        yearEl.textContent = new Date().getFullYear();
+        await ensureCustomer();
+        const productsResp = await fetchJSON('/api/products');
+        state.products = productsResp.products.map((product) => ({
+          ...product,
+          channelSupport: product.channelSupport,
+        }));
+        renderProducts();
+        const meta = await fetchJSON('/api/meta');
+        state.support = meta.support;
+        supportInfo.textContent = `支持邮箱：${meta.support.email}${meta.support.wechat ? ' · 微信：' + meta.support.wechat : ''}`;
+      });
+
+      payButton.addEventListener('click', createOrder);
+      cancelButton.addEventListener('click', resetSelection);
+      retryButton.addEventListener('click', () => {
+        paymentCard.style.display = 'none';
+        renderPayment();
+      });
+    </script>
+  </body>
+</html>
