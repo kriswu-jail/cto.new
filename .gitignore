@@ -1,0 +1,48 @@
+# Node.js
+node_modules/
+.pnpm-store/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+coverage/
+.tmp/
+.dist/
+dist/
+build/
+.next/
+out/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pytest_cache/
+.mypy_cache/
+.pytype/
+.venv/
+.env
+.env.*
+!.env.example
+
+# OS / 编辑器
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Docker / Runtime
+.docker/
+Dockerfile.*.local
+compose.override.yml
+redis-data/
+postgres-data/
+
+# 测试与临时文件
+coverage-final.json
+report.xml
+junit.xml
+artifacts/
