@@ -20,7 +20,7 @@ async function waitForJobDone(mgr, id, { timeoutMs = 10000 } = {}) {
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
     const job = await mgr.getJob(id);
-    if ([JobStatus.Completed, JobStatus.Failed, JobStatus.Cancelled].includes(job.status)) return job;
+    if ([JobStatus.Completed, JobStatus.Failed, JobStatus.Cancelled, JobStatus.TimedOut].includes(job.status)) return job;
     await new Promise((r) => setTimeout(r, 20));
   }
   throw new Error("timeout waiting job done");
@@ -84,6 +84,29 @@ describe("JobManager", () => {
     expect(final.output).toBeTruthy();
   });
 
+  test("jobs exceeding timeout are gracefully cancelled", async () => {
+    const mgr = await createManager({ concurrency: 1, defaultTimeoutMs: 40 });
+    const job = await mgr.enqueue({ type: JobTypes.OCR, payload: { delayMs: 30 } });
+    const final = await waitForJobDone(mgr, job.id, { timeoutMs: 3000 });
+    expect(final.status).toBe(JobStatus.TimedOut);
+    expect(final.error).toBeTruthy();
+  });
+
+  test("cleanup removes terminal jobs older than threshold", async () => {
+    const store = tmpStore("cleanup");
+    const mgr = new JobManager({ store, cleanupMaxAgeMs: 500 });
+    await mgr.init();
+    const job = await mgr.enqueue({ type: JobTypes.BatchClean, payload: { delayMs: 10 } });
+    const final = await waitForJobDone(mgr, job.id);
+    const staleJob = await mgr.getJob(final.id);
+    staleJob.finishedAt = Date.now() - 5 * 60 * 1000;
+    await store.update(staleJob);
+
+    await mgr.cleanup({ maxAgeMs: 1000 });
+    const remaining = await mgr.getJob(job.id);
+    expect(remaining).toBeNull();
+  });
+
   test("cancel stops a running job", async () => {
     const mgr = await createManager({ concurrency: 1 });
     const job = await mgr.enqueue({ type: JobTypes.BatchClean, payload: { delayMs: 50 } });
@@ -91,7 +114,7 @@ describe("JobManager", () => {
     await new Promise((r) => setTimeout(r, 40));
     await mgr.cancelJob(job.id);
     const final = await waitForJobDone(mgr, job.id);
-    expect([JobStatus.Cancelled, JobStatus.Completed]).toContain(final.status);
+    expect([JobStatus.Cancelled, JobStatus.Completed, JobStatus.TimedOut]).toContain(final.status);
     // Ideally cancelled
     expect(final.status).toBe(JobStatus.Cancelled);
   });

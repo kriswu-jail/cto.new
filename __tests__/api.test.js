@@ -33,10 +33,18 @@ describe("REST API", () => {
 
     // Final state should be cancelled or completed if finished fast
     const s2 = await request(app).get(`/api/jobs/${id}`).expect(200);
-    expect(["cancelled", "completed", "failed"]).toContain(s2.body.status);
+    expect(["cancelled", "completed", "failed", "timed_out"]).toContain(s2.body.status);
   });
 
   test("rejects unsupported job type", async () => {
     await request(app).post("/api/jobs").send({ type: "Unknown Type" }).expect(400);
+  });
+
+  test("health endpoints expose queue state", async () => {
+    const health = await request(app).get("/health").expect(200);
+    expect(health.body.status).toBe("ok");
+    const status = await request(app).get("/status").expect(200);
+    expect(status.body).toHaveProperty("concurrency");
+    expect(status.body).toHaveProperty("counts");
   });
 });

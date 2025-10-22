@@ -1,8 +1,16 @@
 import fs from "fs-extra";
 import path from "path";
+import { JobStatus } from "../types.js";
 
 const DEFAULT_DATA_DIR = path.join(process.cwd(), "data");
 const DEFAULT_FILE = path.join(DEFAULT_DATA_DIR, "jobs.json");
+
+const TERMINAL_STATUSES = new Set([
+  JobStatus.Completed,
+  JobStatus.Failed,
+  JobStatus.Cancelled,
+  JobStatus.TimedOut,
+]);
 
 export class JSONJobStore {
   constructor({ filePath = DEFAULT_FILE } = {}) {
@@ -63,5 +71,23 @@ export class JSONJobStore {
   async all() {
     await this.init();
     return Array.from(this.jobs.values());
+  }
+
+  async removeOlderThan(cutoffTs) {
+    await this.init();
+    const removed = [];
+    for (const [id, job] of this.jobs.entries()) {
+      if (!TERMINAL_STATUSES.has(job.status)) continue;
+      const referenceTs = job.finishedAt ?? job.createdAt ?? 0;
+      if (!referenceTs) continue;
+      if (referenceTs < cutoffTs) {
+        this.jobs.delete(id);
+        removed.push(job);
+      }
+    }
+    if (removed.length > 0) {
+      await this.save();
+    }
+    return removed;
   }
 }

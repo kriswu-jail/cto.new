@@ -13,6 +13,7 @@ export const JobStatus = Object.freeze({
   Completed: "completed",
   Failed: "failed",
   Cancelled: "cancelled",
+  TimedOut: "timed_out",
 });
 
 export class TransientError extends Error {
