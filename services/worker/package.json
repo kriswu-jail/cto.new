@@ -6,5 +6,10 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "@octokit/plugin-retry": "^5.0.2",
+    "@octokit/plugin-throttling": "^7.0.0",
+    "@octokit/rest": "^20.1.1"
   }
 }
